@@ -10,6 +10,7 @@ class Tweet(Item):
     favorite_count = Field()
     retweet_count = Field()
     viewCount = Field()
+    cover = Field()
     favorite_ratio = Field()
     created_at = Field()
 

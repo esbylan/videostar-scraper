@@ -137,19 +137,24 @@ class TweetScraper(CrawlSpider):
     def parse_tweet_item(self, items,userObj):
         for k,v in items.items():
             # assert k == v['id_str'], (k,v)
-            url = '' 
+            url = ''
+            cover=''
             try:
+              videoArr = []
               for video in v['extended_entities']['media'][0]['video_info']['variants']:
                 if video['content_type'] == 'video/mp4':
-                  url = video['url']
-                  break
+                  videoArr.append(video) 
+              bitrateArr= [item['bitrate'] for item in videoArr]
+              maxBitrateIndex = bitrateArr.index(max(bitrateArr))
+              url = videoArr[maxBitrateIndex]['url']
+              cover = v['extended_entities']['media'][0]['media_url_https']
               tweet = Tweet()
               # tweet['id_'] = k
               tweet['nickname'] = userObj[v['user_id_str']]['name']
               tweet['username'] = '@'+userObj[v['user_id_str']]['screen_name']
               tweet['content'] = v['full_text']
-              # tweet['video'] = url
-              tweet['video'] = v['extended_entities']['media'][0]['media_url_https']
+              tweet['cover'] = cover
+              tweet['video'] = url
               tweet['favorite_count'] = v['favorite_count']
               tweet['retweet_count'] = v['retweet_count'] + v['quote_count']
               try:
